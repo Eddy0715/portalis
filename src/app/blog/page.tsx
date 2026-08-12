@@ -1,14 +1,22 @@
 "use client";
 
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { blogPosts } from "@/lib/blogData";
+import { client } from "@/sanity/lib/client";
 
 /* ─────────── helpers ─────────── */
+function getExcerpt(body: any[]): string {
+  if (!body || !Array.isArray(body)) return "No description available.";
+  const firstTextBlock = body.find((block) => block._type === "block" && block.children);
+  if (!firstTextBlock) return "No description available.";
+  const text = firstTextBlock.children.map((child: any) => child.text).join("");
+  return text.length > 160 ? text.substring(0, 157) + "..." : text;
+}
 function formatDate(dateStr: string) {
   const d = new Date(dateStr);
   if (isNaN(d.getTime())) return dateStr.toUpperCase();
@@ -42,7 +50,7 @@ function FeaturedCard({
   post,
   index,
 }: {
-  post: (typeof blogPosts)[0];
+  post: any;
   index: number;
 }) {
   return (
@@ -111,7 +119,7 @@ function GridCard({
   post,
   index,
 }: {
-  post: (typeof blogPosts)[0];
+  post: any;
   index: number;
 }) {
   return (
@@ -176,8 +184,63 @@ function GridCard({
    PAGE
 ══════════════════════════════════════ */
 export default function BlogListingPage() {
-  const featuredPost = blogPosts[0];
-  const remainingPosts = blogPosts.slice(1);
+  const [posts, setPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchPosts = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const sanityPosts = await client.withConfig({ useCdn: false }).fetch(`
+        *[_type == "post"] | order(publishedAt desc) {
+          title,
+          "slug": slug.current,
+          "image": mainImage.asset->url,
+          "category": categories[0]->title,
+          "author": {
+            "name": author->name,
+            "image": author->image.asset->url
+          },
+          publishedAt,
+          body
+        }
+      `);
+
+      if (sanityPosts) {
+        const mapped = sanityPosts.map((post: any) => ({
+          title: post.title,
+          slug: post.slug,
+          excerpt: post.body ? getExcerpt(post.body) : "No description available.",
+          image: post.image || "/assets/blog_fallback.png",
+          category: post.category || "General",
+          author: {
+            name: post.author?.name || "Portalis Team",
+            image: post.author?.image || "/assets/extracted_img_p7_1_375.jpeg",
+          },
+          publishedAt: post.publishedAt
+            ? new Date(post.publishedAt).toLocaleDateString("en-US", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              })
+            : "August 1, 2026",
+          content: post.body,
+          isSanity: true,
+        }));
+        setPosts(mapped);
+      }
+    } catch (err: any) {
+      console.error("Error fetching Sanity posts:", err);
+      setError("Unable to connect to the blog database. Please verify your connection.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchPosts();
+  }, [fetchPosts]);
 
   return (
     <>
@@ -209,23 +272,44 @@ export default function BlogListingPage() {
         <div className="w-full border-t border-forest-green/10 mb-14" />
 
         {/* ── Blog Grid ── */}
-        <section className="px-6 md:px-12 max-w-7xl mx-auto">
-          {/* Mobile: single column stack; Desktop: side-by-side layout */}
-          <div className="flex flex-col lg:flex-row gap-6 md:gap-8 items-stretch">
-
-            {/* LEFT — Featured card */}
-            <div className="w-full lg:w-[32%] shrink-0">
-              <FeaturedCard post={featuredPost} index={0} />
+        <section className="px-6 md:px-12 max-w-7xl mx-auto min-h-[350px] flex items-center justify-center">
+          {loading ? (
+            <div className="flex flex-col items-center justify-center space-y-4">
+              <div className="w-10 h-10 rounded-full border-2 border-warm-gold/20 border-t-warm-gold animate-spin" />
+              <p className="text-xs text-charcoal-black/50 tracking-widest uppercase font-medium">Loading Journal...</p>
             </div>
-
-            {/* RIGHT — 2×2 grid, collapses to 1 col on mobile */}
-            <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
-              {remainingPosts.map((post, idx) => (
-                <GridCard key={post.slug} post={post} index={idx + 1} />
-              ))}
+          ) : error ? (
+            <div className="text-center space-y-4 max-w-md mx-auto">
+              <p className="text-sm text-red-700 font-medium">{error}</p>
+              <button 
+                onClick={fetchPosts} 
+                className="px-5 py-2.5 border border-warm-gold/50 text-[10px] uppercase tracking-[0.25em] font-semibold text-warm-gold hover:bg-warm-gold hover:text-white transition-all duration-300 w-fit mx-auto cursor-pointer"
+              >
+                Retry Connection
+              </button>
             </div>
+          ) : posts.length === 0 ? (
+            <div className="text-center space-y-2">
+              <p className="text-sm text-charcoal-black/60">No articles published yet.</p>
+              <p className="text-xs text-warm-gold uppercase tracking-wider">Check back soon for insights</p>
+            </div>
+          ) : (
+            <div className="flex flex-col lg:flex-row gap-6 md:gap-8 items-stretch w-full">
+              {/* LEFT — Featured card */}
+              {posts[0] && (
+                <div className="w-full lg:w-[32%] shrink-0">
+                  <FeaturedCard post={posts[0]} index={0} />
+                </div>
+              )}
 
-          </div>
+              {/* RIGHT — 2×2 grid, collapses to 1 col on mobile */}
+              <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
+                {posts.slice(1).map((post, idx) => (
+                  <GridCard key={post.slug} post={post} index={idx + 1} />
+                ))}
+              </div>
+            </div>
+          )}
         </section>
       </main>
 

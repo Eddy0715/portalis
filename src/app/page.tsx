@@ -446,9 +446,9 @@ export default function HomePage() {
               </div>
 
               {/* Right Column Oval Image Cluster (PDF Page 13-16 Renders) */}
-              <div className="lg:col-span-6 relative w-full h-[360px] sm:h-[480px] lg:h-[660px] max-w-[620px] mx-auto lg:mx-0">
+              <div className="lg:col-span-6 relative w-full h-[380px] sm:h-[480px] lg:h-[660px] max-w-[340px] sm:max-w-[440px] lg:max-w-[620px] mx-auto lg:mx-0">
                 {/* Oval 1 (upper-left): Lunico Restobar (La Mer) */}
-                <div className="absolute left-0 top-0 w-[150px] h-[210px] sm:w-[220px] sm:h-[310px] lg:w-[310px] lg:h-[450px] rounded-full overflow-hidden border border-warm-gold/25 shadow-md z-10">
+                <div className="absolute left-0 top-0 w-[170px] h-[240px] sm:w-[220px] sm:h-[310px] lg:w-[310px] lg:h-[450px] rounded-[50%] overflow-hidden border border-warm-gold/25 shadow-md z-10">
                   <Image
                     src="/assets/extracted_img_p20_1_182.jpeg"
                     alt="Lunico Restobar La Mer"
@@ -459,7 +459,7 @@ export default function HomePage() {
                 </div>
 
                 {/* Oval 2 (upper-right): Lekki Restobar (Jumeirah) */}
-                <div className="absolute right-0 top-4 sm:top-6 lg:top-8 w-[110px] h-[160px] sm:w-[160px] sm:h-[230px] lg:w-[240px] lg:h-[340px] rounded-full overflow-hidden border border-warm-gold/25 shadow-md z-10">
+                <div className="absolute right-0 top-4 sm:top-6 lg:top-8 w-[125px] h-[180px] sm:w-[160px] sm:h-[230px] lg:w-[240px] lg:h-[340px] rounded-[50%] overflow-hidden border border-warm-gold/25 shadow-md z-10">
                   <Image
                     src="/assets/extracted_img_p23_1_203.jpeg"
                     alt="Lekki Restobar Jumeirah"
@@ -470,7 +470,7 @@ export default function HomePage() {
                 </div>
 
                 {/* Oval 3 (bottom-left): Schneider Electric Office (DSO) */}
-                <div className="absolute left-[40px] sm:left-[60px] lg:left-[90px] bottom-0 w-[130px] h-[180px] sm:w-[190px] sm:h-[260px] lg:w-[270px] lg:h-[370px] rounded-full overflow-hidden border border-warm-gold/25 shadow-md z-20">
+                <div className="absolute left-[30px] sm:left-[60px] lg:left-[90px] bottom-0 w-[145px] h-[200px] sm:w-[190px] sm:h-[260px] lg:w-[270px] lg:h-[370px] rounded-[50%] overflow-hidden border border-warm-gold/25 shadow-md z-20">
                   <Image
                     src="/assets/extracted_img_p7_1_375.jpeg"
                     alt="Schneider Electric Office"
@@ -481,14 +481,14 @@ export default function HomePage() {
                 </div>
 
                 {/* Oval 4 (bottom-right): Solid Forest Green Tagline circle */}
-                <div className="absolute right-1 sm:right-2 lg:right-4 bottom-2 sm:bottom-4 lg:bottom-6 w-[90px] h-[90px] sm:w-[130px] sm:h-[130px] lg:w-[190px] lg:h-[190px] rounded-full bg-forest-green border border-warm-gold/20 flex flex-col justify-center p-2 sm:p-4 lg:p-6 text-center text-white shadow-md z-30">
-                  <span className="text-[7px] sm:text-[9px] lg:text-[11px] text-warm-gold uppercase tracking-[0.15em] font-semibold block mb-0.5 sm:mb-1 lg:mb-2">PORTALIS</span>
-                  <p className="text-[7px] sm:text-[9px] lg:text-[11px] font-normal leading-relaxed tracking-wider hidden sm:block">
+                <div className="absolute right-2 sm:right-2 lg:right-4 bottom-4 sm:bottom-4 lg:bottom-6 w-[110px] h-[110px] sm:w-[130px] sm:h-[130px] lg:w-[190px] lg:h-[190px] rounded-full bg-forest-green border border-warm-gold/20 flex flex-col justify-center p-2.5 sm:p-4 lg:p-6 text-center text-white shadow-md z-30">
+                  <span className="text-[8px] sm:text-[9px] lg:text-[11px] text-warm-gold uppercase tracking-[0.15em] font-semibold block mb-0.5 sm:mb-1 lg:mb-2">PORTALIS</span>
+                  <p className="text-[8px] sm:text-[9px] lg:text-[11px] font-normal leading-relaxed tracking-wider">
                     Timeless design.<br />
                     Meaningful spaces.<br />
                     Inspired living.
                   </p>
-                  <div className="w-4 sm:w-6 lg:w-8 h-[1px] bg-warm-gold/50 mx-auto mt-0.5 sm:mt-1 lg:mt-2 hidden sm:block" />
+                  <div className="w-6 sm:w-6 lg:w-8 h-[1px] bg-warm-gold/50 mx-auto mt-1 sm:mt-1 lg:mt-2" />
                 </div>
               </div>
             </div>

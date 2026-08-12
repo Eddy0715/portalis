@@ -4,14 +4,39 @@ import { notFound } from "next/navigation";
 import { ChevronLeft, Calendar, User, ArrowRight } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { blogPosts } from "@/lib/blogData";
+import { client } from "@/sanity/lib/client";
+import { PortableText } from "next-sanity";
+import { urlFor } from "@/sanity/lib/image";
+
+const portableTextComponents = {
+  types: {
+    image: ({ value }: { value: any }) => {
+      if (!value?.asset) return null;
+      return (
+        <div className="relative w-full aspect-[16/9] my-8 rounded-[16px] overflow-hidden border border-warm-gold/15 shadow-sm">
+          <Image
+            src={urlFor(value).url()}
+            alt={value.alt || "Blog Image"}
+            fill
+            className="object-cover"
+          />
+        </div>
+      );
+    },
+  },
+};
 
 /* ───────────────────────── Static Params ───────────────────────── */
 
 export async function generateStaticParams() {
-  return blogPosts.map((post) => ({
-    slug: post.slug,
-  }));
+  let sanitySlugs: any[] = [];
+  try {
+    const posts = await client.fetch(`*[_type == "post"] { "slug": slug.current }`);
+    sanitySlugs = posts.map((post: any) => ({ slug: post.slug }));
+  } catch (err) {
+    console.error("Error fetching static params slugs from Sanity:", err);
+  }
+  return sanitySlugs;
 }
 
 /* ───────────────────────── Page Props ───────────────────────── */
@@ -22,14 +47,89 @@ interface PageProps {
 
 export default async function BlogArticlePage({ params }: PageProps) {
   const { slug } = await params;
-  const post = blogPosts.find((p) => p.slug === slug);
+
+  let post: any = null;
+
+  // 1. Try to fetch from Sanity (fresh data)
+  try {
+    const sanityPost = await client.withConfig({ useCdn: false }).fetch(
+      `*[_type == "post" && slug.current == $slug][0] {
+        title,
+        "slug": slug.current,
+        "image": mainImage.asset->url,
+        "category": categories[0]->title,
+        "author": {
+          "name": author->name,
+          "image": author->image.asset->url
+        },
+        publishedAt,
+        body
+      }`,
+      { slug }
+    );
+
+    if (sanityPost) {
+      post = {
+        title: sanityPost.title,
+        slug: sanityPost.slug,
+        image: sanityPost.image || "/assets/blog_fallback.png",
+        category: sanityPost.category || "General",
+        author: {
+          name: sanityPost.author?.name || "Portalis Team",
+          image: sanityPost.author?.image || "/assets/extracted_img_p7_1_375.jpeg",
+        },
+        publishedAt: sanityPost.publishedAt
+          ? new Date(sanityPost.publishedAt).toLocaleDateString("en-US", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            })
+          : "August 1, 2026",
+        content: sanityPost.body,
+        isSanity: true,
+      };
+    }
+  } catch (err) {
+    console.error("Error fetching Sanity post details:", err);
+  }
 
   if (!post) {
     notFound();
   }
 
-  // Related posts (excluding current post, max 3)
-  const relatedPosts = blogPosts.filter((p) => p.slug !== slug).slice(0, 3);
+  // Fetch related posts (dynamic + static fallback)
+  let relatedPosts: any[] = [];
+  try {
+    const sanityRelated = await client.withConfig({ useCdn: false }).fetch(
+      `*[_type == "post" && slug.current != $slug][0...3] {
+        title,
+        "slug": slug.current,
+        "image": mainImage.asset->url,
+        "category": categories[0]->title,
+        publishedAt
+      }`,
+      { slug }
+    );
+    if (sanityRelated && sanityRelated.length > 0) {
+      relatedPosts = sanityRelated.map((item: any) => ({
+        title: item.title,
+        slug: item.slug,
+        image: item.image || "/assets/blog_fallback.png",
+        category: item.category || "General",
+        publishedAt: item.publishedAt
+          ? new Date(item.publishedAt).toLocaleDateString("en-US", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            })
+          : "August 1, 2026",
+      }));
+    }
+  } catch (err) {
+    console.error("Error fetching related posts from Sanity:", err);
+  }
+
+  // No static fallback, only show what Sanity returns (up to 3)
 
   return (
     <>
@@ -86,10 +186,9 @@ export default async function BlogArticlePage({ params }: PageProps) {
           </div>
 
           {/* HTML Rich Content Body */}
-          <div 
-            className="blog-content-rich max-w-none mb-20"
-            dangerouslySetInnerHTML={{ __html: post.content }}
-          />
+          <div className="blog-content-rich max-w-none mb-20">
+            <PortableText value={post.content} components={portableTextComponents} />
+          </div>
 
           {/* Related Articles Section */}
           {relatedPosts.length > 0 && (

@@ -1,8 +1,14 @@
 "use client";
 
 import React from "react";
+import { usePathname } from "next/navigation";
 
 export default function WhatsAppButton() {
+  const pathname = usePathname();
+  const isStudio = pathname?.startsWith("/studio");
+
+  if (isStudio) return null;
+
   return (
     <a
       href="https://wa.me/971555222074"

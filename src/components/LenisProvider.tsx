@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -10,8 +11,12 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function LenisProvider({ children }: { children: React.ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null);
+  const pathname = usePathname();
+  const isStudio = pathname?.startsWith("/studio");
 
   useEffect(() => {
+    if (isStudio) return;
+
     // Initialize Lenis Smooth Scroll
     const lenis = new Lenis({
       duration: 1.2,
@@ -40,7 +45,7 @@ export default function LenisProvider({ children }: { children: React.ReactNode 
       lenis.destroy();
       gsap.ticker.remove(updateRaf);
     };
-  }, []);
+  }, [isStudio]);
 
   return <>{children}</>;
 }
