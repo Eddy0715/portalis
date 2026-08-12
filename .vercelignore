@@ -6,13 +6,13 @@ build/
 .vercel/
 
 # Ignore local scratch folders and PDF extractions (very large files)
-projects/
-scratch/
-extracted_images/
-gateway_extracted_images/
-gateway_pages/
-pdf_pages/
-portalis_pdf_extracted_images/
+/projects/
+/scratch/
+/extracted_images/
+/gateway_extracted_images/
+/gateway_pages/
+/pdf_pages/
+/portalis_pdf_extracted_images/
 
 # Ignore raw PDF documents
 *.pdf
