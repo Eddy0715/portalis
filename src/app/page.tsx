@@ -448,35 +448,35 @@ export default function HomePage() {
               {/* Right Column Oval Image Cluster (PDF Page 13-16 Renders) */}
               <div className="lg:col-span-6 relative w-full h-[380px] sm:h-[480px] lg:h-[660px] max-w-[340px] sm:max-w-[440px] lg:max-w-[620px] mx-auto lg:mx-0">
                 {/* Oval 1 (upper-left): Lunico Restobar (La Mer) */}
-                <div className="absolute left-0 top-0 w-[170px] h-[240px] sm:w-[220px] sm:h-[310px] lg:w-[310px] lg:h-[450px] rounded-[50%] overflow-hidden border border-warm-gold/25 shadow-md z-10">
+                <div className="absolute left-0 top-0 w-[185px] h-[240px] sm:w-[240px] sm:h-[310px] lg:w-[350px] lg:h-[460px] rounded-[50%] overflow-hidden border border-warm-gold/25 shadow-md z-10">
                   <Image
                     src="/assets/extracted_img_p20_1_182.jpeg"
                     alt="Lunico Restobar La Mer"
                     fill
                     className="object-cover"
-                    sizes="(max-width: 640px) 220px, 310px"
+                    sizes="(max-width: 640px) 240px, 350px"
                   />
                 </div>
 
                 {/* Oval 2 (upper-right): Lekki Restobar (Jumeirah) */}
-                <div className="absolute right-0 top-4 sm:top-6 lg:top-8 w-[125px] h-[180px] sm:w-[160px] sm:h-[230px] lg:w-[240px] lg:h-[340px] rounded-[50%] overflow-hidden border border-warm-gold/25 shadow-md z-10">
+                <div className="absolute right-0 top-4 sm:top-6 lg:top-8 w-[145px] h-[180px] sm:w-[185px] sm:h-[230px] lg:w-[280px] lg:h-[350px] rounded-[50%] overflow-hidden border border-warm-gold/25 shadow-md z-10">
                   <Image
                     src="/assets/extracted_img_p23_1_203.jpeg"
                     alt="Lekki Restobar Jumeirah"
                     fill
                     className="object-cover"
-                    sizes="(max-width: 640px) 160px, 240px"
+                    sizes="(max-width: 640px) 185px, 280px"
                   />
                 </div>
 
                 {/* Oval 3 (bottom-left): Schneider Electric Office (DSO) */}
-                <div className="absolute left-[30px] sm:left-[60px] lg:left-[90px] bottom-0 w-[145px] h-[200px] sm:w-[190px] sm:h-[260px] lg:w-[270px] lg:h-[370px] rounded-[50%] overflow-hidden border border-warm-gold/25 shadow-md z-20">
+                <div className="absolute left-[30px] sm:left-[60px] lg:left-[90px] bottom-0 w-[160px] h-[200px] sm:w-[210px] sm:h-[260px] lg:w-[300px] lg:h-[390px] rounded-[50%] overflow-hidden border border-warm-gold/25 shadow-md z-20">
                   <Image
                     src="/assets/extracted_img_p7_1_375.jpeg"
                     alt="Schneider Electric Office"
                     fill
                     className="object-cover"
-                    sizes="(max-width: 640px) 190px, 270px"
+                    sizes="(max-width: 640px) 210px, 300px"
                   />
                 </div>
 
