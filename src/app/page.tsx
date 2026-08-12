@@ -273,7 +273,7 @@ export default function HomePage() {
               We create refined residential, commercial, and hospitality interiors that blend elegance, functionality, and timeless craftsmanship.
             </p>
             
-            <div className="flex flex-col gap-3 pt-8">
+            <div className="flex flex-col gap-3 pt-8 max-w-[480px]">
               {/* Primary Actions */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <a
