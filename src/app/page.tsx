@@ -4,98 +4,84 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ChevronRight, MapPin, Phone, Mail, Clock, Trophy, Shield, Award, Sparkles, Building2, Lightbulb, Users, PenTool, ShieldCheck, Leaf } from "lucide-react";
+import { ArrowRight, ChevronRight, MapPin, Phone, Mail, Clock, Trophy, Shield, Award, Sparkles, Building2, Lightbulb, Users, PenTool, ShieldCheck, Leaf, CalendarDays } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Lightbox from "@/components/Lightbox";
 import ContactForm from "@/components/ContactForm";
-import { CardCarousel } from "@/components/ui/card-carousel";
-import FoldText from "@/components/ui/FoldText";
-import Counter from "@/components/ui/Counter";
 
-// Portfolio projects from projects directory
+// Portfolio projects mapping from PORTALIS .pdf catalog (Pages 13-16)
 const portfolioProjects = [
   {
     id: 1,
-    title: "Shade (Citywalk)",
+    title: "Lunico (La Mer)",
     category: "Hospitality",
-    src: "/projects/shade-citywalk/img1.webp",
-    images: [
-      "/projects/shade-citywalk/img1.webp",
-      "/projects/shade-citywalk/img2.webp",
-      "/projects/shade-citywalk/img3.webp",
-      "/projects/shade-citywalk/img4.webp",
-      "/projects/shade-citywalk/img5.webp"
-    ],
-    desc: "High-end luxury salon & premium styling venue combining arched vanity lighting, bespoke joinery, and premium marble finishes at Citywalk, Dubai.",
+    src: "/assets/extracted_img_p20_1_182.jpeg",
+    desc: "Luxury restobar interior fit-out balancing immersive lighting and premium textures.",
   },
   {
     id: 2,
-    title: "La Brioche (Water's Edge)",
+    title: "Lekki (Jumeirah)",
     category: "Hospitality",
-    src: "/projects/labrioche-waters-edge/DSC_00000.webp",
-    images: [
-      "/projects/labrioche-waters-edge/DSC_00000.webp",
-      "/projects/labrioche-waters-edge/DSC_0004.webp",
-      "/projects/labrioche-waters-edge/DSC_0007.webp",
-      "/projects/labrioche-waters-edge/DSC_0017.webp",
-      "/projects/labrioche-waters-edge/DSC_0018.webp"
-    ],
-    desc: "Bespoke French bistro and bakery interior fit-out at Water's Edge, Abu Dhabi.",
+    src: "/assets/extracted_img_p23_1_203.jpeg",
+    desc: "Upscale dining and nightlife venue featuring bespoke metal work and joinery.",
   },
   {
     id: 3,
-    title: "Turtle Cove Cafe (Saadiyat Island)",
+    title: "Daikan (Citywalk)",
     category: "Hospitality",
-    src: "/projects/turtle-cove-cafe/DSC_0377.webp",
-    images: [
-      "/projects/turtle-cove-cafe/DSC_0377.webp",
-      "/projects/turtle-cove-cafe/DSC_0384.webp",
-      "/projects/turtle-cove-cafe/DSC_0389.webp",
-      "/projects/turtle-cove-cafe/DSC_0391.webp",
-      "/projects/turtle-cove-cafe/DSC_0393.webp"
-    ],
-    desc: "Artisanal coastal cafe and specialty coffee venue on Saadiyat Island, Abu Dhabi.",
+    src: "/assets/extracted_img_p13_3_924.jpeg",
+    desc: "Industrial-chic ramen bistro combining concrete finishes and timber detailing.",
   },
   {
     id: 4,
-    title: "Vapiano (ZCC)",
+    title: "Nox (Citywalk)",
     category: "Hospitality",
-    src: "/projects/vapiano-zcc/IMG_0081.webp",
-    images: [
-      "/projects/vapiano-zcc/IMG_0081.webp",
-      "/projects/vapiano-zcc/IMG_0082.webp",
-      "/projects/vapiano-zcc/IMG_0084.webp",
-      "/projects/vapiano-zcc/IMG_0086.webp",
-      "/projects/vapiano-zcc/IMG_0087.webp"
-    ],
-    desc: "Modern Italian fast-casual restaurant fit-out and joinery work at ZCC, Abu Dhabi.",
+    src: "/assets/extracted_img_p15_4_986.jpeg",
+    desc: "Premium cocktail lounge with mood lighting and custom velvet seating layouts.",
   },
   {
     id: 5,
-    title: "Domino's (Makani Mall)",
+    title: "Chili's (CCAZ)",
     category: "Hospitality",
-    src: "/projects/dominos-makani-mall/DSC_0001-01.webp",
-    images: [
-      "/projects/dominos-makani-mall/DSC_0001-01.webp",
-      "/projects/dominos-makani-mall/DSC_0020-01.webp",
-      "/projects/dominos-makani-mall/DSC_0021-01.webp",
-      "/projects/dominos-makani-mall/DSC_0024-02.webp",
-      "/projects/dominos-makani-mall/DSC_0028-02.webp"
-    ],
-    desc: "Turnkey interior fit-out and architectural execution for Domino's Pizza at Makani Mall.",
+    src: "/assets/extracted_img_p12_1_126.jpeg",
+    desc: "Turnkey fit-out of the casual dining restaurant chain in Dubai.",
   },
-];
-
-const galleryCarouselImages = [
-  { num: "01", label: "SHADE RESTOBAR", src: "/projects/shade-citywalk/DSC_0003.webp", alt: "Shade Restobar Citywalk" },
-  { num: "02", label: "LA BRIOCHE BISTRO", src: "/projects/labrioche-waters-edge/DSC_00000.webp", alt: "La Brioche Waters Edge" },
-  { num: "03", label: "TURTLE COVE CAFE", src: "/projects/turtle-cove-cafe/DSC_0377.webp", alt: "Turtle Cove Cafe Saadiyat" },
-  { num: "04", label: "VAPIANO RESTAURANT", src: "/projects/vapiano-zcc/IMG_0081.webp", alt: "Vapiano ZCC" },
-  { num: "05", label: "DOMINO'S MAKANI", src: "/projects/dominos-makani-mall/DSC_0001-01.webp", alt: "Dominos Makani Mall" },
-  { num: "06", label: "SHADE LOUNGE", src: "/projects/shade-citywalk/DSC_0010.webp", alt: "Shade Lounge Area" },
-  { num: "07", label: "LA BRIOCHE INTERIOR", src: "/projects/labrioche-waters-edge/DSC_0007.webp", alt: "La Brioche Interior" },
-  { num: "08", label: "TURTLE COVE LOUNGE", src: "/projects/turtle-cove-cafe/DSC_0384.webp", alt: "Turtle Cove Lounge" },
+  {
+    id: 6,
+    title: "Indi16 (Business Bay)",
+    category: "Hospitality",
+    src: "/assets/extracted_img_p14_6_965.jpeg",
+    desc: "Vibrant high-traffic rooftop restobar with custom gold displays and layouts.",
+  },
+  {
+    id: 7,
+    title: "La Brioche (Khabisi)",
+    category: "Hospitality",
+    src: "/assets/extracted_img_p16_3_1010.jpeg",
+    desc: "French country-style bakery and cafe fit-out with bespoke furnishings.",
+  },
+  {
+    id: 8,
+    title: "Wave (Dibba)",
+    category: "Hospitality",
+    src: "/assets/extracted_img_p16_6_1019.jpeg",
+    desc: "Scenic seaside cafe and lounge with biophilic elements and glass works.",
+  },
+  {
+    id: 9,
+    title: "Schneider Electric (DSO)",
+    category: "Commercial",
+    src: "/assets/extracted_img_p7_1_375.jpeg",
+    desc: "Modern corporate headquarters optimization with high-spec MEP engineering.",
+  },
+  {
+    id: 10,
+    title: "Future Food Office",
+    category: "Commercial",
+    src: "/assets/extracted_img_p41_1_379.jpeg",
+    desc: "Innovative, productivity-driven corporate workspace with clean office layouts.",
+  },
 ];
 
 // The 8 services from PORTALIS .pdf Page 4 grid layout
@@ -108,37 +94,37 @@ const services = [
   {
     id: "turnkey-projects",
     title: "Turnkey Projects",
-    image: "/assets/extracted_img_p4_2_337.png",
+    image: "/assets/extracted_img_p4_3_338.jpeg",
   },
   {
     id: "corporate-interiors",
     title: "Corporate Interiors",
-    image: "/assets/extracted_img_p4_3_338.jpeg",
+    image: "/assets/extracted_img_p4_4_339.jpeg",
   },
   {
     id: "mep-systems",
     title: "MEP Systems",
-    image: "/assets/extracted_img_p4_6_341.jpeg",
+    image: "/assets/extracted_img_p4_5_340.jpeg",
   },
   {
     id: "fb-hospitality",
     title: "F&B & Hospitality Fit-Outs",
-    image: "/assets/extracted_img_p4_4_339.jpeg",
+    image: "/assets/extracted_img_p4_6_341.jpeg",
   },
   {
     id: "retail-wellness",
     title: "Retail & Wellness Healthcare",
-    image: "/assets/extracted_img_p4_5_340.jpeg",
+    image: "/assets/extracted_img_p4_7_342.jpeg",
   },
   {
     id: "joinery-services",
     title: "Joinery Services",
-    image: "/assets/extracted_img_p4_7_342.jpeg",
+    image: "/assets/extracted_img_p4_8_344.jpeg",
   },
   {
     id: "approvals-compliance",
     title: "Approvals & Compliance",
-    image: "/assets/extracted_img_p4_8_344.jpeg",
+    image: "/assets/extracted_img_p4_9_345.png",
   },
 ];
 
@@ -159,7 +145,7 @@ const coreValues = [
   {
     icon: Trophy,
     title: "Record-Breaking Innovation",
-    desc: "Constantly pushing the boundaries of what is possible, including our milestone Guinness World Record achievement.",
+    desc: "Constantly pushing the boundaries of what is possible.",
   },
   {
     icon: Shield,
@@ -181,9 +167,8 @@ const coreValues = [
 export default function HomePage() {
   const [activeCategory, setActiveCategory] = useState("All Projects");
   const [filteredProjects, setFilteredProjects] = useState(portfolioProjects);
-  const [activeProject, setActiveProject] = useState<typeof portfolioProjects[0] | null>(null);
-  const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -207,20 +192,16 @@ export default function HomePage() {
   }, [activeCategory]);
 
   const openLightbox = (index: number) => {
-    const proj = filteredProjects[index];
-    setActiveProject(proj);
-    setActiveImageIndex(0);
+    setLightboxIndex(index);
     setLightboxOpen(true);
   };
 
   const handleNextImage = () => {
-    if (!activeProject) return;
-    setActiveImageIndex((prev) => (prev + 1) % activeProject.images.length);
+    setLightboxIndex((prev) => (prev + 1) % filteredProjects.length);
   };
 
   const handlePrevImage = () => {
-    if (!activeProject) return;
-    setActiveImageIndex((prev) => (prev - 1 + activeProject.images.length) % activeProject.images.length);
+    setLightboxIndex((prev) => (prev - 1 + filteredProjects.length) % filteredProjects.length);
   };
 
   return (
@@ -249,81 +230,41 @@ export default function HomePage() {
           </div>
 
           <div className="relative z-10 px-6 md:px-12 max-w-7xl mx-auto w-full flex flex-col space-y-4">
-            <FoldText
-              text="LUXURY INTERIOR DESIGN . FIT-OUT . JOINERY"
-              trigger="scroll"
-              animationType="slide"
-              once={false}
-              fontSize="inherit"
-              fontWeight="inherit"
-              color="var(--color-warm-gold)"
-              className="text-xs sm:text-sm tracking-[0.25em] uppercase font-semibold"
-              style={{ lineHeight: "inherit", letterSpacing: "inherit" }}
-              splitBy="word"
-            />
+            <span className="text-warm-gold text-xs sm:text-sm tracking-[0.25em] uppercase font-semibold">
+              LUXURY INTERIOR DESIGN . FIT-OUT . JOINERY
+            </span>
             <div className="h-[1px] w-12 bg-warm-gold/60 mt-1 mb-4" />
             
             <h1 className="font-heading text-4xl sm:text-6xl md:text-8xl leading-[1.08] text-white">
               Timeless Spaces,<br />
-              Designed for{" "}
-              <span className="italic font-normal font-heading text-warm-gold">Life.</span>
+              Designed for <span className="text-warm-gold italic font-normal">Life.</span>
             </h1>
             
             <p className="text-white/95 text-sm sm:text-base md:text-lg max-w-xl font-normal leading-relaxed pt-4">
               We create refined residential, commercial, and hospitality interiors that blend elegance, functionality, and timeless craftsmanship.
             </p>
             
-            <div className="flex flex-col gap-3 pt-8 max-w-[480px]">
-              {/* Primary Actions */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                <a
-                  href="#portfolio"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                  className="bg-warm-gold hover:bg-white text-forest-green text-xs uppercase tracking-[0.2em] py-4 px-6 text-center transition-all duration-300 font-semibold shadow-sm"
-                >
-                  EXPLORE PROJECTS
-                </a>
-                <a
-                  href="#contact"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                  className="border border-warm-gold/50 hover:border-white text-warm-gold hover:text-white text-xs uppercase tracking-[0.2em] py-4 px-6 text-center transition-all duration-300 font-semibold shadow-sm bg-transparent"
-                >
-                  BOOK CONSULTATION
-                </a>
-              </div>
-
-              {/* Secondary Actions */}
-              <div className="flex flex-row items-center gap-4 sm:gap-6 pt-1">
-                <a
-                  href="https://www.instagram.com/portalis.ae?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="border border-warm-gold/50 hover:border-white text-warm-gold hover:text-white text-xs uppercase tracking-[0.2em] py-3 px-5 text-center transition-all duration-300 font-semibold shadow-sm bg-transparent flex items-center justify-center gap-2"
-                >
-                  <svg className="w-3.5 h-3.5 fill-none stroke-current" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                  </svg>
-                  <span>INSTAGRAM</span>
-                </a>
-                <a
-                  href="#about"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document.getElementById("about")?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                  className="group flex items-center gap-2 text-white/95 hover:text-warm-gold text-xs uppercase tracking-[0.2em] py-3 font-semibold transition-all duration-300"
-                >
-                  OUR PROCESS <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform text-white/95 group-hover:text-warm-gold" />
-                </a>
-              </div>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-6 pt-8">
+              <a
+                href="#portfolio"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="bg-warm-gold hover:bg-white text-forest-green text-xs uppercase tracking-[0.2em] py-4 px-8 text-center transition-all duration-300 font-semibold shadow-sm"
+              >
+                EXPLORE PROJECTS
+              </a>
+              <a
+                href="#about"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById("about")?.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="group flex items-center justify-center sm:justify-start gap-2 text-white/95 hover:text-warm-gold text-xs uppercase tracking-[0.2em] py-4 font-semibold transition-all duration-300"
+              >
+                VIEW OUR PROCESS <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform text-white/95 group-hover:text-warm-gold" />
+              </a>
             </div>
           </div>
         </section>
@@ -344,191 +285,224 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* SECTION 2: ABOUT US (PDF Page 2) */}
-        <section id="about" className="py-24 px-6 md:px-12 bg-light-cream">
-          <div className="max-w-7xl mx-auto">
-            
-            {/* About Story & Oval Image Cluster Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-              
-              {/* Left Column Story */}
-              <div className="lg:col-span-6 flex flex-col space-y-6">
-                <span className="text-warm-gold text-xs uppercase tracking-[0.25em] font-semibold">
-                  ABOUT US
-                </span>
-                <h2 className="font-heading text-3xl sm:text-5xl text-forest-green leading-tight">
-                  Designing Spaces.<br />Enhancing Lives.
+        {/* SECTION 2: ABOUT US — Exact Reference Implementation */}
+        <section id="about" className="relative py-20 bg-[#F5F2EC] overflow-hidden">
+
+          {/* FAR LEFT: Potted Olive Tree & Shadow (Full Bleed Left Edge, Smooth Fade Right) */}
+          <div className="hidden lg:block absolute left-0 top-0 bottom-0 w-[36%] xl:w-[34%] pointer-events-none z-0">
+            <Image
+              src="/assets/potted-olive-tree-v2.png"
+              alt="Luxury interior potted olive tree"
+              fill
+              className="object-cover object-left-bottom"
+              style={{
+                WebkitMaskImage: 'linear-gradient(to right, black 72%, transparent 100%)',
+                maskImage: 'linear-gradient(to right, black 72%, transparent 100%)',
+              }}
+              sizes="550px"
+              priority
+            />
+          </div>
+
+          <div className="relative max-w-[1440px] mx-auto px-6 md:px-10 z-10">
+
+            {/* Main Layout: [Tree Spacer] [Text Content] [Arch Images] */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-10 items-center">
+
+              {/* Spacer Column on Far Left (reserves space for tree & pot) */}
+              <div className="hidden lg:block lg:col-span-3 h-full" />
+
+              {/* CENTER-LEFT: Text Content */}
+              <div className="lg:col-span-4 flex flex-col space-y-5">
+
+                {/* Subtitle */}
+                <div>
+                  <span className="text-warm-gold text-[10px] sm:text-xs uppercase tracking-[0.3em] font-semibold block mb-2">
+                    ABOUT US
+                  </span>
+                  <div className="w-8 h-[1.5px] bg-warm-gold" />
+                </div>
+
+                {/* Headline */}
+                <h2 className="font-heading text-4xl sm:text-[44px] leading-[1.12]">
+                  <span className="text-forest-green font-normal block">Designing Spaces.</span>
+                  <span className="text-warm-gold italic font-normal block mt-1">Enhancing Lives.</span>
                 </h2>
-                
-                <div className="text-charcoal-black text-sm font-normal leading-relaxed">
-                  <div className="float-left border border-warm-gold/50 p-4 bg-white shadow-sm flex flex-col items-center justify-center text-center w-28 h-24 mr-6 mb-4">
-                    <span className="font-heading text-3xl text-forest-green font-semibold">
-                      <Counter value={25} suffix="+" />
-                    </span>
-                    <span className="text-[8px] uppercase tracking-widest text-warm-gold mt-1 font-normal leading-tight font-body">YEARS OF<br />EXPERIENCE</span>
-                  </div>
-                  <p className="mb-4">
-                    At Portalis, we bring a legacy of craftsmanship and expertise to every project. Although our company was founded a decade ago, our roots run deeper—our founder brings over years of experience in the UAE's dynamic interior design industry. This wealth of knowledge, combined with our team's dedication, enables us to create innovative, functional, and cost-effective solutions that truly transform spaces.
+
+                {/* Body Paragraphs */}
+                <div className="space-y-3 text-charcoal-black/80 text-xs sm:text-sm leading-relaxed font-body">
+                  <p>
+                    At Portalis Interiors, we believe that great design goes beyond aesthetics. It shapes the way you live, work, and feel every day.
                   </p>
                   <p>
-                    This wealth of knowledge, combined with our team's dedication, enables us to create innovative, functional, and cost-effective solutions that truly transform spaces.
+                    Our approach is rooted in understanding your vision and crafting interiors that are timeless, functional, and uniquely yours.
                   </p>
                 </div>
 
-                <div className="pt-4">
+                {/* Learn More Button */}
+                <div className="pt-2">
                   <Link
-                    href="/#portfolio"
-                    className="circle-reveal-btn border border-warm-gold/50 px-6 py-3 text-[10px] uppercase tracking-[0.25em] text-warm-gold hover:text-white hover:border-white font-medium transition-colors duration-300 inline-flex items-center gap-3 w-fit"
+                    href="/about"
+                    className="group inline-flex items-center gap-3 border border-warm-gold/60 px-6 py-3 text-[10px] uppercase tracking-[0.25em] text-warm-gold hover:bg-forest-green hover:text-white hover:border-forest-green transition-all duration-300 font-medium"
                   >
-                    Learn More
-                    <ArrowRight size={14} />
+                    <span>LEARN MORE</span>
+                    <ArrowRight size={13} className="text-warm-gold group-hover:text-white group-hover:translate-x-1 transition-all duration-300" />
                   </Link>
                 </div>
-                
-                {/* 4 Core Features */}
-                <div className="grid grid-cols-2 gap-6 mt-8 pt-8 border-t border-forest-green/10">
-                  <div className="flex items-start gap-2.5">
-                    <div className="w-8 h-8 rounded-full border border-warm-gold/30 flex items-center justify-center text-warm-gold shrink-0 bg-white shadow-sm">
-                      <Users size={14} />
+
+                {/* 4 Feature Items — Horizontal arrangement below button */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 border-t border-forest-green/10 mt-2">
+
+                  {/* 1. Client Focused */}
+                  <div className="flex flex-col items-center text-center px-1">
+                    <div className="w-9 h-9 rounded-full border border-warm-gold/40 bg-white/60 flex items-center justify-center text-warm-gold mb-2 shadow-sm">
+                      <Users size={15} />
                     </div>
-                    <div>
-                      <h5 className="text-forest-green text-[9px] uppercase tracking-[0.15em] font-bold mb-1">
-                        CLIENT FOCUSED
-                      </h5>
-                      <p className="text-charcoal-black text-[10px] font-normal leading-relaxed">
-                        We listen, collaborate, and tailor every detail to reflect your lifestyle and goals.
-                      </p>
-                    </div>
+                    <h5 className="text-forest-green text-[8px] uppercase tracking-[0.14em] font-bold mb-1">CLIENT FOCUSED</h5>
+                    <p className="text-charcoal-black/70 text-[8px] leading-relaxed">
+                      We listen, collaborate, and tailor every detail.
+                    </p>
                   </div>
 
-                  <div className="flex items-start gap-2.5">
-                    <div className="w-8 h-8 rounded-full border border-warm-gold/30 flex items-center justify-center text-warm-gold shrink-0 bg-white shadow-sm">
-                      <PenTool size={14} />
+                  {/* 2. Thoughtful Design */}
+                  <div className="flex flex-col items-center text-center px-1 border-l border-forest-green/10">
+                    <div className="w-9 h-9 rounded-full border border-warm-gold/40 bg-white/60 flex items-center justify-center text-warm-gold mb-2 shadow-sm">
+                      <PenTool size={15} />
                     </div>
-                    <div>
-                      <h5 className="text-forest-green text-[9px] uppercase tracking-[0.15em] font-bold mb-1">
-                        THOUGHTFUL DESIGN
-                      </h5>
-                      <p className="text-charcoal-black text-[10px] font-normal leading-relaxed">
-                        Every space is carefully planned to balance beauty, comfort, and functionality.
-                      </p>
-                    </div>
+                    <h5 className="text-forest-green text-[8px] uppercase tracking-[0.14em] font-bold mb-1">THOUGHTFUL DESIGN</h5>
+                    <p className="text-charcoal-black/70 text-[8px] leading-relaxed">
+                      Every space is carefully planned to balance beauty.
+                    </p>
                   </div>
 
-                  <div className="flex items-start gap-2.5">
-                    <div className="w-8 h-8 rounded-full border border-warm-gold/30 flex items-center justify-center text-warm-gold shrink-0 bg-white shadow-sm">
-                      <ShieldCheck size={14} />
+                  {/* 3. Quality Assured */}
+                  <div className="flex flex-col items-center text-center px-1 border-l border-forest-green/10">
+                    <div className="w-9 h-9 rounded-full border border-warm-gold/40 bg-white/60 flex items-center justify-center text-warm-gold mb-2 shadow-sm">
+                      <ShieldCheck size={15} />
                     </div>
-                    <div>
-                      <h5 className="text-forest-green text-[9px] uppercase tracking-[0.15em] font-bold mb-1">
-                        QUALITY ASSURED
-                      </h5>
-                      <p className="text-charcoal-black text-[10px] font-normal leading-relaxed">
-                        We use premium materials and work with skilled craftsmen to deliver excellence.
-                      </p>
-                    </div>
+                    <h5 className="text-forest-green text-[8px] uppercase tracking-[0.14em] font-bold mb-1">QUALITY ASSURED</h5>
+                    <p className="text-charcoal-black/70 text-[8px] leading-relaxed">
+                      We use premium materials and skilled craftsmen.
+                    </p>
                   </div>
 
-                  <div className="flex items-start gap-2.5">
-                    <div className="w-8 h-8 rounded-full border border-warm-gold/30 flex items-center justify-center text-warm-gold shrink-0 bg-white shadow-sm">
-                      <Leaf size={14} />
+                  {/* 4. Sustainable Approach */}
+                  <div className="flex flex-col items-center text-center px-1 border-l border-forest-green/10">
+                    <div className="w-9 h-9 rounded-full border border-warm-gold/40 bg-white/60 flex items-center justify-center text-warm-gold mb-2 shadow-sm">
+                      <Leaf size={15} />
                     </div>
-                    <div>
-                      <h5 className="text-forest-green text-[9px] uppercase tracking-[0.15em] font-bold mb-1">
-                        SUSTAINABLE APPROACH
-                      </h5>
-                      <p className="text-charcoal-black text-[10px] font-normal leading-relaxed">
-                        We prioritize sustainable choices that create beautiful, responsible spaces.
-                      </p>
-                    </div>
+                    <h5 className="text-forest-green text-[8px] uppercase tracking-[0.14em] font-bold mb-1">SUSTAINABLE APPROACH</h5>
+                    <p className="text-charcoal-black/70 text-[8px] leading-relaxed">
+                      We prioritize sustainable and responsible choices.
+                    </p>
                   </div>
+
                 </div>
+
               </div>
 
-              {/* Right Column Oval Image Cluster (PDF Page 13-16 Renders) */}
-              <div className="lg:col-span-6 relative w-full h-[380px] sm:h-[480px] lg:h-[660px] max-w-[340px] sm:max-w-[440px] lg:max-w-[620px] mx-auto lg:mx-0">
-                {/* Oval 1 (upper-left): Lunico Restobar (La Mer) */}
-                <div className="absolute left-0 top-0 w-[185px] h-[240px] sm:w-[240px] sm:h-[310px] lg:w-[350px] lg:h-[460px] rounded-[50%] overflow-hidden border border-warm-gold/25 shadow-md z-10">
+              {/* RIGHT: Architectural Organic Arch Composition */}
+              <div className="lg:col-span-5 relative w-full h-[500px] sm:h-[580px] max-w-[620px] mx-auto">
+
+                {/* IMAGE 1: Large Architectural Arch (Upper Center/Right) */}
+                <div
+                  className="absolute left-[3%] top-0 w-[50%] h-[80%] overflow-hidden border border-warm-gold/20 shadow-lg z-10 transition-transform duration-500 hover:scale-[1.01]"
+                  style={{ borderRadius: '180px 180px 100px 100px' }}
+                >
                   <Image
-                    src="/assets/extracted_img_p20_1_182.jpeg"
-                    alt="Lunico Restobar La Mer"
+                    src="/assets/about-interior-1.png"
+                    alt="Portalis Luxury Interior Alcove Console"
                     fill
                     className="object-cover"
-                    sizes="(max-width: 640px) 240px, 350px"
+                    sizes="(max-width: 768px) 240px, 320px"
+                    priority
                   />
                 </div>
 
-                {/* Oval 2 (upper-right): Lekki Restobar (Jumeirah) */}
-                <div className="absolute right-0 top-4 sm:top-6 lg:top-8 w-[145px] h-[180px] sm:w-[185px] sm:h-[230px] lg:w-[280px] lg:h-[350px] rounded-[50%] overflow-hidden border border-warm-gold/25 shadow-md z-10">
+                {/* IMAGE 2: Upper Right Vertical Arch/Capsule */}
+                <div
+                  className="absolute right-[2%] top-[3%] w-[42%] h-[54%] overflow-hidden border border-warm-gold/20 shadow-lg z-10 transition-transform duration-500 hover:scale-[1.01]"
+                  style={{ borderRadius: '140px 140px 140px 140px' }}
+                >
                   <Image
-                    src="/assets/extracted_img_p23_1_203.jpeg"
-                    alt="Lekki Restobar Jumeirah"
+                    src="/assets/about-interior-2.png"
+                    alt="Portalis Living Room"
                     fill
                     className="object-cover"
-                    sizes="(max-width: 640px) 185px, 280px"
+                    sizes="(max-width: 768px) 200px, 260px"
                   />
                 </div>
 
-                {/* Oval 3 (bottom-left): Schneider Electric Office (DSO) */}
-                <div className="absolute left-[30px] sm:left-[60px] lg:left-[90px] bottom-0 w-[160px] h-[200px] sm:w-[210px] sm:h-[260px] lg:w-[300px] lg:h-[390px] rounded-[50%] overflow-hidden border border-warm-gold/25 shadow-md z-20">
+                {/* IMAGE 3: Lower Middle Vertical Rounded Arch (Overlapping) */}
+                <div
+                  className="absolute left-[30%] bottom-[2%] w-[45%] h-[56%] overflow-hidden border border-warm-gold/20 shadow-xl z-20 transition-transform duration-500 hover:scale-[1.01]"
+                  style={{ borderRadius: '150px 150px 150px 150px' }}
+                >
                   <Image
-                    src="/assets/extracted_img_p7_1_375.jpeg"
-                    alt="Schneider Electric Office"
+                    src="/assets/about-interior-3.png"
+                    alt="Portalis Dining Room"
                     fill
                     className="object-cover"
-                    sizes="(max-width: 640px) 210px, 300px"
+                    sizes="(max-width: 768px) 220px, 280px"
                   />
                 </div>
 
-                {/* Oval 4 (bottom-right): Solid Forest Green Tagline circle */}
-                <div className="absolute right-2 sm:right-2 lg:right-4 bottom-4 sm:bottom-4 lg:bottom-6 w-[110px] h-[110px] sm:w-[130px] sm:h-[130px] lg:w-[190px] lg:h-[190px] rounded-full bg-forest-green border border-warm-gold/20 flex flex-col justify-center p-2.5 sm:p-4 lg:p-6 text-center text-white shadow-md z-30">
-                  <span className="text-[8px] sm:text-[9px] lg:text-[11px] text-warm-gold uppercase tracking-[0.15em] font-semibold block mb-0.5 sm:mb-1 lg:mb-2">PORTALIS</span>
-                  <p className="text-[8px] sm:text-[9px] lg:text-[11px] font-normal leading-relaxed tracking-wider">
+                {/* DARK GREEN CIRCLE STATEMENT (Lower Right) */}
+                <div
+                  className="absolute right-0 bottom-[8%] w-[150px] h-[150px] sm:w-[190px] sm:h-[190px] rounded-full bg-[#0A352F] border border-warm-gold/30 flex flex-col justify-center items-center text-center text-white shadow-xl z-30 p-4"
+                >
+                  <p className="text-[10px] sm:text-xs font-normal leading-relaxed tracking-wide text-white/90">
                     Timeless design.<br />
                     Meaningful spaces.<br />
                     Inspired living.
                   </p>
-                  <div className="w-6 sm:w-6 lg:w-8 h-[1px] bg-warm-gold/50 mx-auto mt-1 sm:mt-1 lg:mt-2" />
+                  <div className="w-8 h-[1px] bg-warm-gold mt-2.5" />
                 </div>
+
               </div>
+
             </div>
 
-            {/* Mission & Vision Banners (Image 1 style) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 mt-20 pt-16 border-t border-forest-green/10 relative">
-              {/* Mission Column */}
-              <div className="flex items-start gap-5">
-                <div className="w-12 h-12 rounded-full bg-forest-green flex items-center justify-center text-warm-gold shrink-0 shadow-sm">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 3v1.5M3 21v-6m0 0l2.77-.693a9 9 0 016.208.682l.108.054a9 9 0 006.086.71l3.114-.732a48.524 48.524 0 01-3.42-3.485L12 10.5M3 15V8.25m0 0l2.77-.693a9 9 0 016.208.682l.108.054a9 9 0 006.086.71l3.114-.732a48.524 48.524 0 01-3.42-3.485L12 3.75M3 8.25v6.75" />
-                  </svg>
+            {/* BOTTOM: Mission + Vision Rounded Panel */}
+            <div className="mt-16 p-8 sm:p-10 rounded-[32px] bg-[#F0ECE1]/80 border border-warm-gold/20 relative overflow-hidden backdrop-blur-sm shadow-sm">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 relative z-10">
+
+                {/* Mission */}
+                <div className="flex items-start gap-5">
+                  <div className="w-12 h-12 rounded-full bg-forest-green flex items-center justify-center text-warm-gold shrink-0 shadow-sm">
+                    <svg className="w-5 h-5 text-warm-gold" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 3v1.5M3 21v-6m0 0l2.77-.693a9 9 0 016.208.682l.108.054a9 9 0 006.086.71l3.114-.732a48.524 48.524 0 01-3.42-3.485L12 10.5M3 15V8.25m0 0l2.77-.693a9 9 0 016.208.682l.108.054a9 9 0 006.086.71l3.114-.732a48.524 48.524 0 01-3.42-3.485L12 3.75M3 8.25v6.75" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="text-warm-gold text-[10px] uppercase tracking-[0.25em] font-semibold mb-2">OUR MISSION</h4>
+                    <p className="text-charcoal-black/85 text-xs sm:text-sm font-normal leading-relaxed">
+                      To create inspiring interiors that elevate everyday living through thoughtful design, quality, and integrity.
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-warm-gold text-[11px] uppercase tracking-[0.25em] font-semibold mb-2">OUR MISSION</h4>
-                  <p className="text-charcoal-black text-[12px] font-normal leading-relaxed">
-                    To be the premier partner for spatial transformations across the GCC, recognized for redefining environments through architectural innovation, precision craftsmanship, and a seamless end-to-end approach that sets global benchmarks for quality and execution. By bridging imaginative design with flawless operational delivery, we aim to shape inspiring, sustainable spaces that elevate human experience and stand as timeless landmarks of excellence.
-                  </p>
+
+                {/* Vision */}
+                <div className="flex items-start gap-5 md:border-l md:border-warm-gold/20 md:pl-12">
+                  <div className="w-12 h-12 rounded-full bg-forest-green flex items-center justify-center text-warm-gold shrink-0 shadow-sm">
+                    <svg className="w-5 h-5 text-warm-gold" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.43 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="text-warm-gold text-[10px] uppercase tracking-[0.25em] font-semibold mb-2">OUR VISION</h4>
+                    <p className="text-charcoal-black/85 text-xs sm:text-sm font-normal leading-relaxed">
+                      To be a trusted name in interior design, known for creating timeless spaces that leave a lasting impact.
+                    </p>
+                  </div>
                 </div>
+
               </div>
 
-              {/* Vision Column */}
-              <div className="flex items-start gap-5">
-                <div className="w-12 h-12 rounded-full bg-forest-green flex items-center justify-center text-warm-gold shrink-0 shadow-sm">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.43 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="text-warm-gold text-[11px] uppercase tracking-[0.25em] font-semibold mb-2">OUR VISION</h4>
-                  <p className="text-charcoal-black text-[12px] font-normal leading-relaxed">
-                    To deliver turnkey, high-end design development and fit-out solutions across the hospitality, corporate, retail, and wellness sectors. We pledge to collaborate closely with our clients to transform their concepts into functional, inspiring, and cost-effective realities, navigating complex regulatory frameworks flawlessly and consistently honouring our commitments to timelines, budget, and environmental sustainability.
-                  </p>
-                </div>
-              </div>
-
-              {/* Gold Leaf Illustration in bottom right corner */}
-              <div className="absolute right-0 -bottom-6 pointer-events-none opacity-20 hidden md:block">
-                <svg className="w-36 h-36 text-warm-gold" fill="none" stroke="currentColor" strokeWidth="1" viewBox="0 0 100 100">
+              {/* Botanical Leaf SVG Decoration */}
+              <div className="absolute right-4 bottom-2 pointer-events-none opacity-20 hidden md:block z-0">
+                <svg className="w-32 h-32 text-warm-gold" fill="none" stroke="currentColor" strokeWidth="1" viewBox="0 0 100 100">
                   <path d="M50 90 C50 60, 30 30, 20 10" />
                   <path d="M50 90 C50 60, 70 30, 80 10" />
                   <path d="M50 90 L50 20" />
@@ -540,11 +514,13 @@ export default function HomePage() {
                   <path d="M50 30 Q65 20 75 15" />
                 </svg>
               </div>
+
             </div>
+
           </div>
         </section>
 
-        {/* STANDALONE CORE VALUES SECTION (PDF Page 3 - PREMIUM DARK FOREST GREEN RE-DESIGN) */}
+        {/* STANDALONE CORE VALUES SECTION */}
         <section className="bg-forest-green py-24 px-6 md:px-12 border-t border-b border-warm-gold/20 relative overflow-hidden">
           {/* Subtle gold line pattern background representing drafting coordinates */}
           <div className="absolute inset-0 pointer-events-none opacity-10 flex items-center justify-center">
@@ -620,37 +596,264 @@ export default function HomePage() {
                 
                 <h2 className="font-heading text-4xl sm:text-5xl md:text-[3.25rem] leading-tight text-forest-green">
                   Spaces That Inspire,<br />
-                  <FoldText
-                    text="Details That Matter."
-                    trigger="scroll"
-                    hinge="top"
-                    duration={0.65}
-                    stagger={0.045}
-                    fontSize="inherit"
-                    fontWeight="inherit"
-                    color="var(--color-warm-gold)"
-                    className="font-heading"
-                    style={{ lineHeight: "inherit", letterSpacing: "inherit" }}
-                    once={false}
-                  />
+                  <span className="text-warm-gold">Details That Matter.</span>
                 </h2>
                 <p className="text-charcoal-black/80 text-xs sm:text-sm font-normal max-w-xl mt-4 leading-relaxed">
                   A curated collection of moments, textures, and compositions that reflect our design philosophy.
                 </p>
               </div>
 
-              {/* Interactive 3D Card Carousel */}
-              <div className="pt-4">
-                <CardCarousel
-                  images={galleryCarouselImages}
-                  autoplayDelay={2500}
-                  showPagination={true}
-                  showNavigation={true}
-                />
+              {/* Grid of 6 photo library cards with 3D perspective curved arch panel layout */}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 pt-8 pb-4 perspective-container">
+                {[
+                  { num: "01", label: "LIVE SPACES", image: "/assets/extracted_img_p15_4_986.jpeg" },
+                  { num: "02", label: "RESTOBAR", image: "/assets/extracted_img_p23_1_203.jpeg" },
+                  { num: "03", label: "LOUNGE AREAS", image: "/assets/extracted_img_p13_3_924.jpeg" },
+                  { num: "04", label: "DINING AREAS", image: "/assets/extracted_img_p16_6_1019.jpeg" },
+                  { num: "05", label: "BATHROOMS", image: "/assets/extracted_img_p12_2_127.jpeg" },
+                  { num: "06", label: "PRIVATE DINING", image: "/assets/extracted_img_p14_3_956.jpeg" },
+                ].map((item, idx) => (
+                  <div 
+                    key={item.num} 
+                    className={`flex flex-col group cursor-pointer transition-all duration-500 hover:-translate-y-2 perspective-card-${idx}`}
+                  >
+                    <div className="relative w-full aspect-[9/14] rounded-[20px] overflow-hidden border border-warm-gold/15 shadow-sm group-hover:shadow-md transition-all duration-500">
+                      <Image
+                        src={item.image}
+                        alt={item.label}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                        sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 17vw"
+                      />
+                    </div>
+                    <div className="mt-4 text-center">
+                      <span className="text-[10px] uppercase font-bold text-warm-gold tracking-widest block mb-1">
+                        {item.num}
+                      </span>
+                      <h4 className="text-[11px] uppercase tracking-[0.15em] font-semibold text-forest-green group-hover:text-warm-gold transition-colors duration-300">
+                        {item.label}
+                      </h4>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Dot Indicators (Image 1 style) */}
+              <div className="flex justify-center items-center gap-2 mt-8">
+                <span className="w-2.5 h-2.5 rounded-full bg-warm-gold" />
+                <span className="w-1.5 h-1.5 rounded-full bg-stone-gray/40" />
+                <span className="w-1.5 h-1.5 rounded-full bg-stone-gray/40" />
+                <span className="w-1.5 h-1.5 rounded-full bg-stone-gray/40" />
+                <span className="w-1.5 h-1.5 rounded-full bg-stone-gray/40" />
+                <span className="w-1.5 h-1.5 rounded-full bg-stone-gray/40" />
               </div>
             </div>
 
+            {/* DESIGN ELEMENTS BLOCK */}
+            <div className="border-t border-forest-green/10 pt-20">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+                
+                {/* Left side info */}
+                <div className="lg:col-span-4 flex flex-col space-y-6">
+                  <div>
+                    <span className="text-warm-gold text-[10px] uppercase tracking-[0.25em] font-semibold block mb-2">
+                      OUR DESIGN ELEMENTS
+                    </span>
+                    <h2 className="font-heading text-4xl sm:text-5xl leading-tight uppercase">
+                      <span className="text-forest-green block">DESIGN</span>
+                      <span className="text-warm-gold block">STYLE</span>
+                    </h2>
+                  </div>
+                  <p className="text-charcoal-black text-xs sm:text-sm font-normal leading-relaxed">
+                    Our design style is a reflection of our philosophy—where form meets function, and beauty lies in simplicity. We believe great interiors are not just seen, but felt. Every element is thoughtfully chosen to create spaces that are timeless, personal, and inspiring.
+                  </p>
+                </div>
 
+                {/* Right side element items list */}
+                <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-12">
+                  {[
+                    {
+                      title: "BALANCE",
+                      desc: "A perfect harmony of proportions, materials, and visual weight.",
+                      icon: (
+                        <svg className="w-5 h-5 text-warm-gold" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                          <circle cx="9" cy="12" r="5" strokeDasharray="2 2" />
+                          <circle cx="15" cy="12" r="5" />
+                        </svg>
+                      ),
+                    },
+                    {
+                      title: "PROPORTION",
+                      desc: "Carefully considered scale and layout to create spaces that feel just right.",
+                      icon: (
+                        <svg className="w-5 h-5 text-warm-gold" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                          <rect x="4" y="4" width="7" height="7" rx="1" />
+                          <rect x="13" y="4" width="7" height="7" rx="1" />
+                          <rect x="4" y="13" width="7" height="7" rx="1" />
+                          <rect x="13" y="13" width="7" height="7" rx="1" />
+                        </svg>
+                      ),
+                    },
+                    {
+                      title: "MATERIALITY",
+                      desc: "Natural, authentic materials that age beautifully and tell a story.",
+                      icon: (
+                        <svg className="w-5 h-5 text-warm-gold" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                          <path d="M12 3 L20 7 L12 11 L4 7 Z" />
+                          <path d="M4 7 L4 14 L12 18 L12 11" />
+                          <path d="M20 7 L20 14 L12 18" />
+                        </svg>
+                      ),
+                    },
+                    {
+                      title: "LIGHT",
+                      desc: "Thoughtful lighting to enhance mood, texture, and function.",
+                      icon: (
+                        <svg className="w-5 h-5 text-warm-gold" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                          <circle cx="12" cy="12" r="4" />
+                          <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+                        </svg>
+                      ),
+                    },
+                    {
+                      title: "TEXTURE",
+                      desc: "Layering of textures to add depth, warmth, and character.",
+                      icon: (
+                        <svg className="w-5 h-5 text-warm-gold" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                          <path d="M4 18h16M4 14h16M4 10h16M4 6h16" strokeDasharray="3 3" />
+                        </svg>
+                      ),
+                    },
+                    {
+                      title: "TIMELESSNESS",
+                      desc: "Designing spaces that remain elegant and relevant for years to come.",
+                      icon: (
+                        <svg className="w-5 h-5 text-warm-gold" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                          <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                      ),
+                    },
+                  ].map((item, idx) => (
+                    <div key={idx} className="flex flex-col space-y-3.5 border-l border-warm-gold/20 pl-5">
+                      <div className="w-9 h-9 rounded-full border border-warm-gold/30 flex items-center justify-center bg-white shadow-sm">
+                        {item.icon}
+                      </div>
+                      <div>
+                        <h4 className="text-[10px] uppercase tracking-[0.15em] font-bold text-forest-green mb-1">
+                          {item.title}
+                        </h4>
+                        <p className="text-charcoal-black text-[11px] font-normal leading-relaxed">
+                          {item.desc}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+              </div>
+            </div>
+
+            {/* COLLAGE & ATMOSPHERE CARDS */}
+            <div className="border-t border-forest-green/10 pt-20">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+                
+                {/* Collage of design inspirations */}
+                <div className="lg:col-span-6 flex flex-col space-y-6">
+                  <h3 className="font-heading text-xl uppercase tracking-[0.2em] text-forest-green">
+                    DESIGN INSPIRATION
+                  </h3>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="relative aspect-[3/4] sm:aspect-auto sm:h-[450px] rounded-2xl overflow-hidden border border-warm-gold/10 shadow-sm">
+                      <Image
+                        src="/assets/extracted_img_p15_4_986.jpeg"
+                        alt="Inspiration 1"
+                        fill
+                        className="object-cover hover:scale-[1.03] transition-transform duration-700"
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="relative h-[218px] rounded-2xl overflow-hidden border border-warm-gold/10 shadow-sm">
+                        <Image
+                          src="/assets/extracted_img_p20_1_182.jpeg"
+                          alt="Inspiration 2"
+                          fill
+                          className="object-cover hover:scale-[1.03] transition-transform duration-700"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4 h-[218px]">
+                        <div className="relative rounded-2xl overflow-hidden border border-warm-gold/10 shadow-sm">
+                          <Image
+                            src="/assets/extracted_img_p13_3_924.jpeg"
+                            alt="Inspiration 3"
+                            fill
+                            className="object-cover hover:scale-[1.03] transition-transform duration-700"
+                          />
+                        </div>
+                        <div className="relative rounded-2xl overflow-hidden border border-warm-gold/10 shadow-sm">
+                          <Image
+                            src="/assets/extracted_img_p23_1_203.jpeg"
+                            alt="Inspiration 4"
+                            fill
+                            className="object-cover hover:scale-[1.03] transition-transform duration-700"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Atmosphere & feel cards */}
+                <div className="lg:col-span-6 flex flex-col space-y-6">
+                  <h3 className="font-heading text-xl uppercase tracking-[0.2em] text-forest-green">
+                    ATMOSPHERE & FEEL
+                  </h3>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    {[
+                      {
+                        title: "SOPHISTICATED & CHIC",
+                        desc: "Moody tones, refined materials, and ambient lighting create an elevated and sophisticated experience.",
+                        image: "/assets/extracted_img_p20_2_183.jpeg",
+                      },
+                      {
+                        title: "WARM & INVITING",
+                        desc: "Rich textures, warm lighting, and earthy tones bring comfort, intimacy, and a welcoming atmosphere.",
+                        image: "/assets/extracted_img_p14_5_962.jpeg",
+                      },
+                      {
+                        title: "CONNECTED TO NATURE",
+                        desc: "Biophilic elements and natural materials create a calming connection between indoor comfort and outdoor beauty.",
+                        image: "/assets/extracted_img_p13_6_936.jpeg",
+                      },
+                    ].map((card, idx) => (
+                      <div
+                        key={idx}
+                        className="flex flex-col bg-forest-green rounded-2xl border border-warm-gold/15 overflow-hidden shadow-sm"
+                      >
+                        <div className="relative w-full aspect-square">
+                          <Image
+                            src={card.image}
+                            alt={card.title}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="p-5 flex-grow flex flex-col space-y-2.5">
+                          <h4 className="font-heading text-xs text-warm-gold tracking-wider uppercase font-semibold leading-tight">
+                            {card.title}
+                          </h4>
+                          <p className="text-[10px] text-white/90 font-normal leading-relaxed flex-grow">
+                            {card.desc}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+            </div>
 
           </div>
         </section>
@@ -684,20 +887,7 @@ export default function HomePage() {
                   We ARE
                 </h3>
                 <h2 className="font-heading text-4xl sm:text-[3.5rem] leading-none tracking-wide">
-                  <FoldText
-                    text="EXPERTISE"
-                    trigger="scroll"
-                    hinge="top"
-                    duration={0.65}
-                    stagger={0.045}
-                    fontSize="inherit"
-                    fontWeight="inherit"
-                    color="var(--color-warm-gold)"
-                    className="font-bold font-heading"
-                    style={{ lineHeight: "inherit", letterSpacing: "inherit" }}
-                    once={false}
-                  />{" "}
-                  <span className="text-forest-green uppercase font-normal">IN</span>
+                  <span className="text-warm-gold font-bold">EXPERTISE</span> <span className="text-forest-green uppercase font-normal">IN</span>
                 </h2>
                 
                 <div className="pt-2">
@@ -758,11 +948,25 @@ export default function HomePage() {
               </p>
             </div>
 
-
-
+            {/* Filter buttons */}
+            <div className="flex flex-wrap gap-4 mb-12 border-b border-charcoal-black/10 pb-6">
+              {["All Projects", "Commercial", "Hospitality"].map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`text-[10px] uppercase tracking-[0.25em] font-medium py-2 px-4 transition-all duration-300 ${
+                    activeCategory === cat
+                      ? "text-forest-green border-b border-forest-green font-semibold"
+                      : "text-charcoal-black/80 hover:text-forest-green"
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
 
             {/* Portfolio Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               <AnimatePresence mode="popLayout">
                 {filteredProjects.map((project, index) => (
                   <motion.div
@@ -802,118 +1006,148 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* SECTION 6: CONTACT & MAPS */}
-        <section id="contact" className="py-16 md:py-24 px-6 md:px-12 bg-forest-green text-white relative">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-              {/* Left Column Details */}
-              <div className="lg:col-span-5 flex flex-col space-y-8">
-                <div>
-                  <span className="text-warm-gold text-xs uppercase tracking-[0.3em] block mb-4">
-                    Get In Touch
-                  </span>
-                  <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl leading-tight text-white mb-6">
-                    Contact Us
-                  </h2>
-                  <p className="text-white text-sm font-normal leading-relaxed max-w-sm">
-                    We would love to hear about your project. Reach out to us and let's create something beautiful together.
-                  </p>
-                </div>
+        {/* SECTION 6: CONTACT — updated design */}
+        <section id="contact" className="bg-light-cream relative overflow-hidden">
 
-                {/* Details list */}
-                <div className="space-y-6 pt-8 border-t border-white/10">
+          {/* Decorative: Dark green semi-circle top-left */}
+          <div className="absolute -top-10 -left-10 w-[180px] h-[180px] rounded-full bg-forest-green hidden md:block" style={{ zIndex: 1 }} />
+
+          {/* Decorative: Beige circle top-right */}
+          <div className="absolute top-8 -right-8 w-[100px] h-[100px] rounded-full bg-stone-gray/50 hidden md:block" style={{ zIndex: 1 }} />
+
+          {/* Decorative: Dot grid left */}
+          <div className="absolute left-6 top-1/2 -translate-y-1/2 hidden xl:block opacity-30" style={{ zIndex: 0 }}>
+            {Array.from({ length: 5 }).map((_, row) => (
+              <div key={row} className="flex gap-2 mb-2">
+                {Array.from({ length: 3 }).map((_, col) => (
+                  <div key={col} className="w-1 h-1 rounded-full bg-warm-gold/70" />
+                ))}
+              </div>
+            ))}
+          </div>
+
+          {/* Decorative: Dot grid right */}
+          <div className="absolute right-6 bottom-12 hidden xl:block opacity-30" style={{ zIndex: 1 }}>
+            {Array.from({ length: 5 }).map((_, row) => (
+              <div key={row} className="flex gap-2 mb-2">
+                {Array.from({ length: 3 }).map((_, col) => (
+                  <div key={col} className="w-1 h-1 rounded-full bg-warm-gold/70" />
+                ))}
+              </div>
+            ))}
+          </div>
+
+          <div className="relative max-w-[1280px] mx-auto px-6 md:px-12 py-24" style={{ zIndex: 2 }}>
+            <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr_340px] gap-8 xl:gap-12 items-start">
+
+              {/* LEFT: Form Card */}
+              <div className="bg-white border border-stone-gray/30 shadow-sm p-7">
+                <span className="text-warm-gold text-[10px] uppercase tracking-[0.3em] font-semibold block mb-4">
+                  SEND US A MESSAGE
+                </span>
+                <h3 className="font-heading text-2xl sm:text-3xl text-charcoal-black leading-tight mb-6">
+                  Let&apos;s Start Your<br />
+                  Dream <span className="text-warm-gold italic">Project</span>
+                </h3>
+                <ContactForm />
+              </div>
+
+              {/* CENTER: Contact Info */}
+              <div className="py-4 lg:py-0 flex flex-col items-center text-center">
+                <span className="text-warm-gold text-[10px] uppercase tracking-[0.35em] font-semibold mb-4 block">
+                  GET IN TOUCH
+                </span>
+                <h2 className="font-heading text-5xl sm:text-6xl leading-tight mb-3">
+                  <span className="text-charcoal-black">Contact </span>
+                  <span className="text-warm-gold italic">Us</span>
+                </h2>
+                <div className="w-10 h-[2px] bg-warm-gold mx-auto mb-5" />
+                <p className="text-charcoal-black/70 text-sm font-normal leading-relaxed mb-10 max-w-[340px]">
+                  We&apos;d love to hear about your project.<br />
+                  Reach out to us and let&apos;s create something beautiful together.
+                </p>
+
+                <div className="space-y-5 text-left w-full max-w-[340px]">
+                  {/* ADDRESS */}
                   <div className="flex items-start gap-4">
-                    <MapPin size={18} className="text-warm-gold mt-1" />
+                    <div className="w-10 h-10 rounded-full bg-forest-green flex items-center justify-center shrink-0">
+                      <MapPin size={16} className="text-white" />
+                    </div>
                     <div>
-                      <h4 className="text-[10px] uppercase tracking-[0.2em] font-medium text-warm-gold">Address</h4>
-                      <p className="text-white/95 text-xs font-normal mt-1">
+                      <h5 className="text-[9px] uppercase tracking-[0.25em] text-warm-gold font-semibold mb-1">ADDRESS</h5>
+                      <p className="text-charcoal-black text-[12px] font-normal leading-relaxed">
                         Industrial Area 2, Ajman, UAE
                       </p>
                     </div>
                   </div>
-
+                  {/* PHONE */}
                   <div className="flex items-start gap-4">
-                    <Phone size={18} className="text-warm-gold mt-1" />
+                    <div className="w-10 h-10 rounded-full bg-forest-green flex items-center justify-center shrink-0">
+                      <Phone size={16} className="text-white" />
+                    </div>
                     <div>
-                      <h4 className="text-[10px] uppercase tracking-[0.2em] font-medium text-warm-gold">Phone</h4>
-                      <p className="text-white/95 text-xs font-normal mt-1">
-                        +971 55 522 2074
-                      </p>
+                      <h5 className="text-[9px] uppercase tracking-[0.25em] text-warm-gold font-semibold mb-1">PHONE</h5>
+                      <p className="text-charcoal-black text-[12px] font-normal">+971 55 522 2074</p>
                     </div>
                   </div>
-
+                  {/* EMAIL */}
                   <div className="flex items-start gap-4">
-                    <Mail size={18} className="text-warm-gold mt-1" />
+                    <div className="w-10 h-10 rounded-full bg-forest-green flex items-center justify-center shrink-0">
+                      <Mail size={16} className="text-white" />
+                    </div>
                     <div>
-                      <h4 className="text-[10px] uppercase tracking-[0.2em] font-medium text-warm-gold">Email</h4>
-                      <p className="text-white/95 text-xs font-normal mt-1">
-                        info@portalis.ae
-                      </p>
+                      <h5 className="text-[9px] uppercase tracking-[0.25em] text-warm-gold font-semibold mb-1">EMAIL</h5>
+                      <p className="text-charcoal-black text-[12px] font-normal">info@portalis.ae</p>
                     </div>
                   </div>
-
+                  {/* HOURS */}
                   <div className="flex items-start gap-4">
-                    <Clock size={18} className="text-warm-gold mt-1" />
+                    <div className="w-10 h-10 rounded-full bg-forest-green flex items-center justify-center shrink-0">
+                      <Clock size={16} className="text-white" />
+                    </div>
                     <div>
-                      <h4 className="text-[10px] uppercase tracking-[0.2em] font-medium text-warm-gold">Hours</h4>
-                      <p className="text-white/95 text-xs font-normal mt-1">
-                        Mon - Sat: 10:00 AM - 7:00 PM<br />Sunday: Closed
+                      <h5 className="text-[9px] uppercase tracking-[0.25em] text-warm-gold font-semibold mb-1">HOURS</h5>
+                      <p className="text-charcoal-black text-[12px] font-normal leading-relaxed">
+                        Mon – Sat: 10:00 AM – 7:00 PM<br />Sunday: Closed
                       </p>
                     </div>
                   </div>
                 </div>
+              </div>
 
-                {/* Map preview block */}
-                <div className="relative w-full h-[180px] border border-warm-gold/20 overflow-hidden">
+              {/* RIGHT: Arched Interior Photo */}
+              <div className="relative self-stretch hidden lg:block">
+                <div
+                  className="relative overflow-hidden w-full h-full min-h-[520px]"
+                  style={{ borderRadius: '180px 180px 12px 12px' }}
+                >
                   <Image
-                    src="/assets/extracted_img_p20_2_183.jpeg"
-                    alt="Lunico Interior Detail Location Map Overlay"
+                    src="/assets/contact-interior.png"
+                    alt="Portalis Interiors — luxury interior design"
                     fill
-                    className="object-cover opacity-50"
+                    className="object-cover object-center"
+                    sizes="340px"
                   />
-                  <div className="absolute inset-0 bg-forest-green/20 flex items-center justify-center">
-                    <div className="bg-forest-green border border-warm-gold p-3 flex items-center gap-2">
-                      <MapPin size={14} className="text-warm-gold" />
-                      <span className="text-[10px] uppercase tracking-widest text-white">Find Us On Map</span>
-                    </div>
-                  </div>
                 </div>
               </div>
 
-              {/* Right Column Form */}
-              <div className="lg:col-span-7 flex flex-col p-6 md:p-10 lg:p-12 border border-warm-gold/20 bg-teal-green/10">
-                <span className="text-warm-gold text-[10px] uppercase tracking-[0.25em] font-semibold mb-6 block">
-                  Send Us A Message
-                </span>
-                <h3 className="font-heading text-2xl text-white mb-6">
-                  Let's Start Your Dream Project
-                </h3>
-                <ContactForm />
-              </div>
             </div>
           </div>
         </section>
       </main>
 
+
       <Footer />
 
       {/* Lightbox for Portfolio Projects */}
-      {activeProject && (
-        <Lightbox
-          isOpen={lightboxOpen}
-          project={{
-            title: activeProject.title,
-            category: activeProject.category,
-            desc: activeProject.desc,
-            images: activeProject.images,
-          }}
-          currentIndex={activeImageIndex}
-          onClose={() => setLightboxOpen(false)}
-          onNext={handleNextImage}
-          onPrev={handlePrevImage}
-          onSelectImage={(index) => setActiveImageIndex(index)}
-        />
-      )}
+      <Lightbox
+        isOpen={lightboxOpen}
+        images={filteredProjects.map((p) => ({ src: p.src, title: p.title, category: p.category }))}
+        currentIndex={lightboxIndex}
+        onClose={() => setLightboxOpen(false)}
+        onNext={handleNextImage}
+        onPrev={handlePrevImage}
+      />
     </>
   );
 }
