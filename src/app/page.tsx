@@ -159,7 +159,7 @@ const coreValues = [
   {
     icon: Trophy,
     title: "Record-Breaking Innovation",
-    desc: "Constantly pushing the boundaries of what is possible, including our milestone Guinness World Record achievement.",
+    desc: "Constantly pushing the boundaries of what is possible.",
   },
   {
     icon: Shield,
