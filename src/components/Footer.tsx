@@ -159,7 +159,7 @@ export default function Footer() {
           </div>
 
           <div className="text-white/70 text-[10px] tracking-[0.18em] uppercase font-normal pt-8">
-            © 2024 Portalis Interiors LLC.<br />All Rights Reserved.
+            © 2026 Portalis Interiors LLC.<br />All Rights Reserved.
           </div>
         </div>
 
